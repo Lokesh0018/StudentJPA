@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 
 
@@ -38,18 +37,22 @@ public class StudentController {
 
     @GetMapping("/api/student/{id}")
     public ResponseEntity<Student> getStudent(@PathVariable long id){
-        Optional<Student> student = studentRepo.findById(id);
-        if(student.isPresent())
-            return new ResponseEntity<>(student.get(), HttpStatus.OK);
+        Optional<Student> stu = studentRepo.findById(id);
+        if(stu.isPresent())
+            return new ResponseEntity<>(stu.get(), HttpStatus.OK);
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("/api/{id}")
-    public ResponseEntity<Student> putStudent(@PathVariable Long id, @RequestBody Student entity) {
-        Optional<Student> student = studentRepo.findById(id);
-        if(student.isPresent())
-            return new ResponseEntity<>(studentRepo.save(entity),HttpStatus.OK);
+    @PutMapping("/api/student/{id}")
+    public ResponseEntity<Student> putStudent(@PathVariable Long id, @RequestBody Student student) {
+        Optional<Student> stu = studentRepo.findById(id);
+        if(stu.isPresent()){
+            stu.get().setName(student.getName());
+            stu.get().setEmail(student.getEmail());
+            stu.get().setAddress(student.getAddress());
+            return new ResponseEntity<>(studentRepo.save(stu.get()),HttpStatus.OK);
+        }
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
